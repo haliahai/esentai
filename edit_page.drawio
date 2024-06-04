@@ -1,0 +1,52 @@
+<mxfile host="app.diagrams.net" modified="2024-06-04T12:25:14.389Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Safari/605.1.15" etag="g_H3rzYN39HNSu8JvHhx" version="24.4.13" type="github">
+  <diagram name="Page-1" id="1o-h2F8mf7DfPaxXtpJX">
+    <mxGraphModel dx="1242" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-1" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="90" y="20" width="600" height="630" as="geometry" />
+        </mxCell>
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="j3vEFiQilEo-5CjBZaf_-2" target="j3vEFiQilEo-5CjBZaf_-6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-2" value="Source language (dropdown)&lt;div&gt;i.e. Kazakh&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="100" width="210" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-6" value="Destination language (dropdown)&lt;div&gt;i.e. English&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="400" y="100" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-9" value="Kazakh gloss (search input)&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="230" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-11" value="Part of speech (dropdown)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="180" width="460" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-12" value="*List of matching glosses&lt;div&gt;*Create new&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="280" width="210" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-13" value="*List of matching glosses&lt;div&gt;*Create new&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="400" y="280" width="220" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-16" value="Submit button" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="390" y="530" width="115" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-18" value="Reset button" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="260" y="530" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-19" value="-&amp;gt;&lt;div&gt;(search button)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="320" y="230" width="50" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-23" value="English gloss (search input)&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="400" y="230" width="175" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="j3vEFiQilEo-5CjBZaf_-24" value="-&amp;gt;&lt;div&gt;(search button)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="575" y="230" width="45" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="J_2sAnnGTBxLTEutRdm5-1" value="Create a link between glosses form" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="210" y="40" width="360" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
