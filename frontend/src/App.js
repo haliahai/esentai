@@ -1,5 +1,5 @@
 import React from 'react';
-import CreateLinkForm from './createLinkForm';
+import CreateLinkForm from './CreateLinkForm';
 
 const App = () => {
   return (
