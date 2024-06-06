@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import FormSection from './FormSection';
-import GlossList from './GlossList';
 
 const GlossColumn = ({
   label,
@@ -11,22 +10,27 @@ const GlossColumn = ({
   onGlossChange,
   onSearch
 }) => {
-  const [localGlosses, setLocalGlosses] = useState([]);
-  const [selectedGloss, setSelectedGloss] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
 
-  const handleSearch = () => {
-//    onSearch(gloss);
-    // Mock search result
-    setLocalGlosses(['example1', 'example2', 'example3']);
+  const handleExpand = () => {
+    setIsExpanded(true);
   };
 
-  const handleSelectGloss = (selectedGloss) => {
-    setSelectedGloss(selectedGloss);
+  const handleBlur = () => {
+    if (gloss.trim() === "") {
+      setIsExpanded(false);
+    }
   };
 
-  const handleAddNewGloss = () => {
-    setSelectedGloss(gloss);
-    setLocalGlosses([...localGlosses, gloss]);
+  const handleSearch = async () => {
+    const results = await onSearch(gloss);
+    setSearchResults(results);
+  };
+
+  const handleResultSelect = (result) => {
+    onGlossChange({ target: { name: `${label.toLowerCase()}Gloss`, value: result } });
+    setSearchResults([]);
   };
 
   return (
@@ -47,14 +51,18 @@ const GlossColumn = ({
       </FormSection>
 
       <FormSection label={`${longLabel} gloss`}>
-        <div className="flex">
+        <div className="flex items-center">
           <input
             type="text"
             id={`${label.toLowerCase()}Gloss`}
             name={`${label.toLowerCase()}Gloss`}
             value={gloss}
             onChange={onGlossChange}
-            className="block w-full mt-1 p-2 border border-gray-300 rounded-md"
+            onFocus={handleExpand}
+            onBlur={handleBlur}
+            className={`transition-all duration-300 ease-in-out ${
+              isExpanded ? 'w-full' : 'w-32'
+            } mt-1 p-2 border border-gray-300 rounded-md`}
             placeholder="Search gloss"
           />
           <button
@@ -65,16 +73,19 @@ const GlossColumn = ({
             Search
           </button>
         </div>
-      </FormSection>
-
-      <FormSection label={`Select a gloss or add a new one`}>
-        <GlossList
-          glosses={localGlosses}
-          selectedGloss={selectedGloss}
-          onSelectGloss={handleSelectGloss}
-          newGloss={gloss}
-          onAddNewGloss={handleAddNewGloss}
-        />
+        {searchResults.length > 0 && (
+          <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1">
+            {searchResults.map((result, index) => (
+              <li
+                key={index}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+                onMouseDown={() => handleResultSelect(result)}
+              >
+                {result}
+              </li>
+            ))}
+          </ul>
+        )}
       </FormSection>
     </div>
   );

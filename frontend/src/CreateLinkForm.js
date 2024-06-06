@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import GlossList from './GlossList';
 import GlossColumn from './GlossColumn';
 
 const CreateLinkForm = () => {
@@ -11,8 +10,6 @@ const CreateLinkForm = () => {
     dstGloss: '',
   });
 
-  const [glosses, setGlosses] = useState([]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -21,25 +18,9 @@ const CreateLinkForm = () => {
     });
   };
 
-  const handleSearch = () => {
-    console.log('Searching for:', formData.srcGloss);
-    // Mock search result
-    setGlosses(['example1', 'example2', 'example3']);
-  };
-
-  const handleGlossSelect = (gloss) => {
-    setFormData({
-      ...formData,
-      srcGloss: gloss,
-    });
-  };
-
-  const handleAddNewGloss = (newGloss) => {
-    setGlosses([...glosses, newGloss]);
-    setFormData({
-      ...formData,
-      srcGloss: newGloss,
-    });
+  const handleSearch = async (query) => {
+    // Simulate an API call to fetch search results
+    return ["example1", "example2", "example3"].filter(item => !item.includes(query));
   };
 
   const handleSubmit = (e) => {
@@ -56,7 +37,6 @@ const CreateLinkForm = () => {
       srcGloss: '',
       dstGloss: '',
     });
-    setGlosses([]);
   };
 
   return (
@@ -86,7 +66,7 @@ const CreateLinkForm = () => {
             gloss={formData.srcGloss}
             onLangChange={handleChange}
             onGlossChange={handleChange}
-            selectedGloss={formData.srcGloss}
+            onSearch={handleSearch}
           />
 
           {/* Right Column - Destination Language */}
@@ -97,7 +77,7 @@ const CreateLinkForm = () => {
             gloss={formData.dstGloss}
             onLangChange={handleChange}
             onGlossChange={handleChange}
-            selectedGloss={formData.dstGloss}
+            onSearch={handleSearch}
           />
         </div>
 
