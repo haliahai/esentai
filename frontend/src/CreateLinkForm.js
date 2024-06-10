@@ -8,6 +8,8 @@ const CreateLinkForm = () => {
     partOfSpeech: '',
     srcGloss: '',
     dstGloss: '',
+    selectedSrcGloss: '',
+    selectedDstGloss: ''
   });
 
   const handleChange = (e) => {
@@ -21,6 +23,24 @@ const CreateLinkForm = () => {
   const handleSearch = async (query) => {
     // Simulate an API call to fetch search results
     return ["example1", "example2", "example3"].filter(item => !item.includes(query));
+  };
+
+  const handleSelectSrcGloss = (gloss) => {
+    setFormData({
+      ...formData,
+      ["selectedSrcGloss"]: gloss
+    });
+  };
+
+  const handleSelectDstGloss = (gloss) => {
+    setFormData({
+      ...formData,
+      ["selectedDstGloss"]: gloss
+    });
+  };
+
+  const handleAddNewGloss = () => {
+    console.log('Add new gloss');
   };
 
   const handleSubmit = (e) => {
@@ -64,9 +84,12 @@ const CreateLinkForm = () => {
             longLabel="Source"
             lang={formData.srcLang}
             gloss={formData.srcGloss}
+            selectedGloss={formData.selectedSrcGloss}
             onLangChange={handleChange}
             onGlossChange={handleChange}
             onSearch={handleSearch}
+            onGlossSelect={handleSelectSrcGloss}
+            onAddNewGloss={handleAddNewGloss}
           />
 
           {/* Right Column - Destination Language */}
@@ -75,9 +98,12 @@ const CreateLinkForm = () => {
             longLabel="Destination"
             lang={formData.dstLang}
             gloss={formData.dstGloss}
+            selectedGloss={formData.selectedDstGloss}
             onLangChange={handleChange}
             onGlossChange={handleChange}
             onSearch={handleSearch}
+            onGlossSelect={handleSelectDstGloss}
+            onAddNewGloss={handleAddNewGloss}
           />
         </div>
 

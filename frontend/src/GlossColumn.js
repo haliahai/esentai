@@ -1,36 +1,31 @@
 import React, { useState } from 'react';
 import FormSection from './FormSection';
+import GlossList from './GlossList';
 
 const GlossColumn = ({
   label,
   longLabel,
   lang,
   gloss,
+  selectedGloss,
   onLangChange,
   onGlossChange,
-  onSearch
+  onSearch,
+  onGlossSelect,
+  onAddNewGloss
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+
   const [searchResults, setSearchResults] = useState([]);
+  const [newGloss, setNewGloss] = useState('');
 
-  const handleExpand = () => {
-    setIsExpanded(true);
-  };
-
-  const handleBlur = () => {
-    if (gloss.trim() === "") {
-      setIsExpanded(false);
-    }
-  };
-
-  const handleSearch = async () => {
-    const results = await onSearch(gloss);
+  const handleSearch = async (query) => {
+    // Simulate an API call to fetch search results
+    const results = ["example1", "example2", "example3"];
     setSearchResults(results);
   };
 
-  const handleResultSelect = (result) => {
-    onGlossChange({ target: { name: `${label.toLowerCase()}Gloss`, value: result } });
-    setSearchResults([]);
+  const handleNewGlossChange = (value) => {
+    setNewGloss(value);
   };
 
   return (
@@ -58,11 +53,7 @@ const GlossColumn = ({
             name={`${label.toLowerCase()}Gloss`}
             value={gloss}
             onChange={onGlossChange}
-            onFocus={handleExpand}
-            onBlur={handleBlur}
-            className={`transition-all duration-300 ease-in-out ${
-              isExpanded ? 'w-full' : 'w-32'
-            } mt-1 p-2 border border-gray-300 rounded-md`}
+            className="transition-all duration-300 ease-in-out w-full mt-1 p-2 border border-gray-300 rounded-md"
             placeholder="Search gloss"
           />
           <button
@@ -73,19 +64,15 @@ const GlossColumn = ({
             Search
           </button>
         </div>
-        {searchResults.length > 0 && (
-          <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1">
-            {searchResults.map((result, index) => (
-              <li
-                key={index}
-                className="p-2 cursor-pointer hover:bg-gray-200"
-                onMouseDown={() => handleResultSelect(result)}
-              >
-                {result}
-              </li>
-            ))}
-          </ul>
-        )}
+      </FormSection>
+
+      <FormSection label={`Select a gloss or add a new one`}>
+        <GlossList
+          glosses={searchResults}
+          selectedGloss={selectedGloss}
+          onGlossSelect={onGlossSelect}
+          onAddNewGloss={onAddNewGloss}
+        />
       </FormSection>
     </div>
   );

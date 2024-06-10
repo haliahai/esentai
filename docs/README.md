@@ -18,6 +18,8 @@ This document provides an overview of the database tables and API request parame
 
 *Note: Fields for edit form on frontend are PartOfSpeach, Lang, Text, Comment.*
 
+*Question: Should we have authorID who modified the gloss?*
+
 ### Link
 | Field         | Type       |
 |---------------|------------|
