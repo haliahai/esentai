@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GlossColumn from './GlossColumn';
 
 const CreateLinkForm = () => {
@@ -11,6 +11,13 @@ const CreateLinkForm = () => {
     selectedSrcGloss: '',
     selectedDstGloss: ''
   });
+
+  const [errors, setErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    setIsFormValid(validate());
+  }, [formData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,25 +35,43 @@ const CreateLinkForm = () => {
   const handleSelectSrcGloss = (gloss) => {
     setFormData({
       ...formData,
-      ["selectedSrcGloss"]: gloss
+      selectedSrcGloss: gloss
     });
   };
 
   const handleSelectDstGloss = (gloss) => {
     setFormData({
       ...formData,
-      ["selectedDstGloss"]: gloss
+      selectedDstGloss: gloss
     });
   };
 
-  const handleAddNewGloss = () => {
-    console.log('Add new gloss');
+  const handleAddNewSrcGloss = () => {
+    console.log('Add new src gloss');
+  };
+
+  const handleAddNewDstGloss = () => {
+    console.log('Add new dst gloss');
+  };
+
+  const validate = () => {
+    const errors = {};
+    if (!formData.srcLang) errors.srcLang = 'Source language is required';
+    if (!formData.dstLang) errors.dstLang = 'Destination language is required';
+    if (!formData.partOfSpeech) errors.partOfSpeech = 'Part of speech is required';
+    if (!formData.srcGloss) errors.srcGloss = 'Source gloss is required';
+    if (!formData.dstGloss) errors.dstGloss = 'Destination gloss is required';
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
-    // Add your form submission logic here
+    if (!isFormValid) {
+      return;
+    }
+    // Handle form submission
+    console.log('Form submitted', formData);
   };
 
   const handleReset = () => {
@@ -56,6 +81,8 @@ const CreateLinkForm = () => {
       partOfSpeech: '',
       srcGloss: '',
       dstGloss: '',
+      selectedSrcGloss: '',
+      selectedDstGloss: ''
     });
   };
 
@@ -89,7 +116,7 @@ const CreateLinkForm = () => {
             onGlossChange={handleChange}
             onSearch={handleSearch}
             onGlossSelect={handleSelectSrcGloss}
-            onAddNewGloss={handleAddNewGloss}
+            onAddNewGloss={handleAddNewSrcGloss}
           />
 
           {/* Right Column - Destination Language */}
@@ -103,7 +130,7 @@ const CreateLinkForm = () => {
             onGlossChange={handleChange}
             onSearch={handleSearch}
             onGlossSelect={handleSelectDstGloss}
-            onAddNewGloss={handleAddNewGloss}
+            onAddNewGloss={handleAddNewDstGloss}
           />
         </div>
 
@@ -117,7 +144,8 @@ const CreateLinkForm = () => {
           </button>
           <button
             type="submit"
-            className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
+            className={`bg-blue-500 text-white font-bold py-2 px-4 rounded ${!isFormValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={!isFormValid}
           >
             Submit
           </button>

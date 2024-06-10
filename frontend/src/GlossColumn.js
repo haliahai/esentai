@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FormSection from './FormSection';
 import GlossList from './GlossList';
 
@@ -17,6 +17,11 @@ const GlossColumn = ({
 
   const [searchResults, setSearchResults] = useState([]);
   const [newGloss, setNewGloss] = useState('');
+  const [isSearchFieldValid, setIsSearchFieldValid] = useState(false);
+
+  useEffect(() => {
+    setIsSearchFieldValid(gloss.length > 0);
+  }, [gloss]);
 
   const handleSearch = async (query) => {
     // Simulate an API call to fetch search results
@@ -60,6 +65,7 @@ const GlossColumn = ({
             type="button"
             onClick={handleSearch}
             className="ml-2 mt-1 bg-blue-500 text-white font-bold py-2 px-4 rounded"
+            disabled={!isSearchFieldValid}
           >
             Search
           </button>
