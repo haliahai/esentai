@@ -32,14 +32,14 @@ const CreateLinkForm = () => {
   const handleSelectSrcGloss = (g) => {
       setFormData({
         ...formData,
-        ["selectedSrcGloss"]: g
+        selectedSrcGloss: g
       });
     };
 
     const handleSelectDstGloss = (g) => {
       setFormData({
         ...formData,
-        ["selectedDstGloss"]: g
+        selectedDstGloss: g
       });
     };
 
