@@ -9,8 +9,8 @@ import com.esentai.table.SqliteSession
 
 class Service {
 
-    fun createLink(srcLang: Language, dstLang: Language, srcGloss: String, dstGloss: String): CreateLinkResponse {
-        return SqliteSession.getInstance().createLink(srcLang, dstLang, srcGloss, dstGloss)
+    fun createLink(srcLang: Language, dstLang: Language, srcGlossId: Long, dstGlossId: Long): CreateLinkResponse {
+        return SqliteSession.getInstance().createLink(srcLang, dstLang, srcGlossId, dstGlossId)
     }
 
     fun getGlosses(

@@ -17,12 +17,11 @@ const GlossColumn = ({
 }) => {
 
   const [searchResults, setSearchResults] = useState([]);
-  const [newGloss, setNewGloss] = useState('');
   const [isSearchFieldValid, setIsSearchFieldValid] = useState(false);
 
   useEffect(() => {
     setIsSearchFieldValid(gloss.length > 0 && lang.length > 0 && partOfSpeech.length > 0);
-  }, [gloss]);
+  }, [gloss, lang, partOfSpeech]);
 
   const handleSearch = async (query) => {
     fetch(`/api/v1/get/glosses?q=${gloss}&lang=${lang}&pos=${partOfSpeech}&limit=10`, {
@@ -43,6 +42,7 @@ const GlossColumn = ({
     .then(data => {
       selectedGloss = data;
       console.log(`Create gloss, response: ${JSON.stringify(data)}`);
+      console.log(`SelectedGlossId: ${selectedGloss.id}`);
     });
   };
 

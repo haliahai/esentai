@@ -29,19 +29,19 @@ const CreateLinkForm = () => {
     });
   };
 
-  const handleSelectSrcGloss = (gloss) => {
-    setFormData({
-      ...formData,
-      selectedSrcGloss: gloss.id
-    });
-  };
+  const handleSelectSrcGloss = (g) => {
+      setFormData({
+        ...formData,
+        ["selectedSrcGloss"]: g
+      });
+    };
 
-  const handleSelectDstGloss = (gloss) => {
-    setFormData({
-      ...formData,
-      selectedDstGloss: gloss.id
-    });
-  };
+    const handleSelectDstGloss = (g) => {
+      setFormData({
+        ...formData,
+        ["selectedDstGloss"]: g
+      });
+    };
 
   const validate = () => {
     const errors = {};
@@ -61,29 +61,14 @@ const CreateLinkForm = () => {
       return;
     }
 
-    fetch(`/api/v1/create/link?src=${formData.srcLang}&dst=${formData.dstLang}&srcGloss=${formData.srcGloss}&dstGloss=${formData.dstGloss}`, {
+    fetch(`/api/v1/create/link?src=${formData.srcLang}&dst=${formData.dstLang}&srcGloss=${formData.selectedSrcGloss.id}&dstGloss=${formData.selectedDstGloss.id}`, {
       method: 'POST'
     })
     .then(response => response.json())
     .then(data => {
+      console.log('Form submitted: ', formData);
       console.log(`Create link, response: ${JSON.stringify(data)}`);
-      handleReset();
-    });
-
-    console.log('Form submitted: ', formData);
-  };
-
-  const handleReset = () => {
-    setFormData({
-      srcLang: '',
-      dstLang: '',
-      partOfSpeech: '',
-      srcGloss: '',
-      dstGloss: '',
-      selectedSrcGloss: '',
-      selectedDstGloss: '',
-      srcComment: '',
-      dstComment: ''
+      window.location.reload();
     });
   };
 
@@ -140,7 +125,7 @@ const CreateLinkForm = () => {
         <div className="flex justify-center items-center mt-6 space-x-4">
           <button
             type="button"
-            onClick={handleReset}
+            onClick={() => window.location.reload()}
             className="bg-red-500 text-white font-bold py-2 px-4 rounded"
           >
             Reset

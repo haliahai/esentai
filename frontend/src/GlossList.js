@@ -41,7 +41,7 @@ const GlossList = ({
         />
         <button
           type="button"
-          onClick={() => onAddNewGloss(comment)}
+          onClick={() => onAddNewGloss()}
           className={`ml-2 mt-1 bg-blue-500 text-white font-bold py-2 px-4 rounded ${!isCommentValid ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           Add New

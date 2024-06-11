@@ -145,57 +145,29 @@ class SqliteSession private constructor() {
         return GetGlossesResponse(glosses)
     }
 
-    fun createLink(firstLang: Language, secondLang: Language, firstText: String, secondText: String): CreateLinkResponse {
-        var firstId: Long? = null
-        var secondId: Long? = null
-
+    fun createLink(firstLang: Language, secondLang: Language, srcGlossId: Long, dstGlossId: Long): CreateLinkResponse {
+        var id: Long? = null
         try {
             getConnection().use { connection ->
                 connection.autoCommit = false
 
                 try {
                     connection.prepareStatement(
-                        "INSERT INTO Gloss (lang, partOfSpeech, text) VALUES (?, ?, ?)",
-                        java.sql.Statement.RETURN_GENERATED_KEYS
+                        "INSERT INTO Link (firstLang, secondLang, firstId, secondId) VALUES (?, ?, ?, ?)"
                     ).use { statement ->
                         statement.setString(1, firstLang.code)
-                        statement.setString(2, "noun")
-                        statement.setString(3, firstText)
+                        statement.setString(2, secondLang.code)
+                        statement.setLong(3, srcGlossId)
+                        statement.setLong(4, dstGlossId)
                         statement.executeUpdate()
+
                         val generatedKeys = statement.generatedKeys
                         if (generatedKeys.next()) {
-                            firstId = generatedKeys.getLong(1)
+                            id = generatedKeys.getLong(1)
                         }
                     }
-
-                    connection.prepareStatement(
-                        "INSERT INTO Gloss (lang, partOfSpeech, text) VALUES (?, ?, ?)",
-                        java.sql.Statement.RETURN_GENERATED_KEYS
-                    ).use { statement ->
-                        statement.setString(1, secondLang.code)
-                        statement.setString(2, "noun")
-                        statement.setString(3, secondText)
-                        statement.executeUpdate()
-                        val generatedKeys = statement.generatedKeys
-                        if (generatedKeys.next()) {
-                            secondId = generatedKeys.getLong(1)
-                        }
-                    }
-
-                    if (firstId != null && secondId != null) {
-                        connection.prepareStatement(
-                            "INSERT INTO Link (firstLang, secondLang, firstId, secondId) VALUES (?, ?, ?, ?)"
-                        ).use { statement ->
-                            statement.setString(1, firstLang.code)
-                            statement.setString(2, secondLang.code)
-                            statement.setLong(3, firstId!!)
-                            statement.setLong(4, secondId!!)
-                            statement.executeUpdate()
-                        }
-                    }
-
                     connection.commit()
-                    return CreateLinkResponse(firstId ?: 0, firstLang.code, secondLang.code, firstText, secondText)
+                    return CreateLinkResponse(id, firstLang.code, secondLang.code, srcGlossId, dstGlossId)
                 } catch (e: SQLException) {
                     connection.rollback()
                     println(e.message)
@@ -207,7 +179,7 @@ class SqliteSession private constructor() {
             println(e.message)
         }
 
-        return CreateLinkResponse(0, firstLang.code, secondLang.code, firstText, secondText)
+        return CreateLinkResponse(id, firstLang.code, secondLang.code, srcGlossId, dstGlossId)
     }
 
     fun getLinks(query: String, srcLang: Language, dstLang: Language, limit: Int): GetLinksResponse {

@@ -101,10 +101,10 @@ fun Application.configureRouting() {
             LOG.info("Got /create/link request")
             val src = call.parameters["src"]
             val dst = call.parameters["dst"]
-            val srcGloss = call.parameters["srcGloss"]
-            val dstGloss = call.parameters["dstGloss"]
+            val srcGlossId = call.parameters["srcGloss"]?.toLongOrNull()
+            val dstGlossId = call.parameters["dstGloss"]?.toLongOrNull()
 
-            if (src == null || dst == null || srcGloss == null || dstGloss == null) {
+            if (src == null || dst == null || srcGlossId == null || dstGlossId == null) {
                 call.respond(GenericResponse.createError("invalid request"))
                 return@post
             }
@@ -117,7 +117,7 @@ fun Application.configureRouting() {
                 return@post
             }
 
-            val response : CreateLinkResponse = service.createLink(srcLang, dstLang, srcGloss, dstGloss)
+            val response : CreateLinkResponse = service.createLink(srcLang, dstLang, srcGlossId, dstGlossId)
             call.respond(response)
         }
     }
