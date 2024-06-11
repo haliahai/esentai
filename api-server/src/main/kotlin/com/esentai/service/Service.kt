@@ -16,12 +16,16 @@ class Service {
     fun getGlosses(
         query: String,
         lang: Language,
-        partOfSpeech: String,
+        partOfSpeech: String?,
         limit: Int
     ): GetGlossesResponse {
 
         if (limit < 0) {
             throw IllegalArgumentException("limit must be non-negative")
+        }
+
+        if (partOfSpeech == null) {
+            return SqliteSession.getInstance().getGlosses(query, lang, limit)
         }
 
         return SqliteSession.getInstance().getGlosses(query, lang, partOfSpeech, limit)

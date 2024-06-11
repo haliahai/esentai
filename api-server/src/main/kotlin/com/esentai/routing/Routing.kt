@@ -22,7 +22,7 @@ fun Application.configureRouting() {
             val partOfSpeech = call.parameters["pos"]
             val limit = call.parameters["limit"]?.toIntOrNull() ?: 10
 
-            if (query == null || lang == null || partOfSpeech == null) {
+            if (query == null || lang == null) {
                 call.respond(GenericResponse.createError("invalid request"))
                 return@get
             }

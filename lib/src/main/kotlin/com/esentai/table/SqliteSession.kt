@@ -145,6 +145,43 @@ class SqliteSession private constructor() {
         return GetGlossesResponse(glosses)
     }
 
+    fun getGlosses(query: String, lang: Language, limit: Int): GetGlossesResponse {
+        val glosses = mutableListOf<Gloss>()
+
+        try {
+            getConnection().use { connection ->
+                connection.prepareStatement(
+                    """
+                    SELECT id, lang, partOfSpeech, text, comment 
+                    FROM Gloss
+                    WHERE text LIKE ? AND lang = ?
+                    LIMIT ?
+                    """.trimIndent()
+                ).use { statement ->
+                    statement.setString(1, "%$query%")
+                    statement.setString(2, lang.code)
+                    statement.setInt(4, limit)
+
+                    val resultSet = statement.executeQuery()
+                    while (resultSet.next()) {
+                        val gloss = Gloss(
+                            id = resultSet.getLong("id"),
+                            lang = resultSet.getString("lang"),
+                            partOfSpeech = resultSet.getString("partOfSpeech"),
+                            text = resultSet.getString("text"),
+                            comment = resultSet.getString("comment")
+                        )
+                        glosses.add(gloss)
+                    }
+                }
+            }
+        } catch (e: SQLException) {
+            println(e.message)
+        }
+
+        return GetGlossesResponse(glosses)
+    }
+
     fun createLink(firstLang: Language, secondLang: Language, srcGlossId: Long, dstGlossId: Long): CreateLinkResponse {
         var id: Long? = null
         try {
