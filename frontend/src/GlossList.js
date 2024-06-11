@@ -11,10 +11,10 @@ const GlossList = ({
       <ul>
         {glosses.map((item, index) => (
           <li key={index}
-              className={`p-2 cursor-pointer ${selectedGloss === item ? 'bg-blue-100' : ''}`}
-              onClick={() => onGlossSelect(item)}
+              className={`p-2 cursor-pointer ${selectedGloss === item.text ? 'bg-blue-100' : ''}`}
+              onClick={() => onGlossSelect(item.text)}
           >
-            {item}
+            {item.text}
           </li>
         ))}
       </ul>

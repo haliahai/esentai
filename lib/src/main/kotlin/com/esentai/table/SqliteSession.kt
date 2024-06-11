@@ -4,7 +4,10 @@ import java.sql.DriverManager
 import java.sql.SQLException
 import java.sql.Connection
 import com.esentai.client.entity.DictionaryLink
+import com.esentai.client.entity.Gloss
+import com.esentai.client.response.CreateGlossResponse
 import com.esentai.client.response.CreateLinkResponse
+import com.esentai.client.response.GetGlossesResponse
 import com.esentai.client.response.GetLinksResponse
 import com.esentai.entity.Language
 
@@ -23,9 +26,13 @@ class SqliteSession private constructor() {
         return "jdbc:sqlite:dictionary.db"
     }
 
+    private fun getConnection(): Connection {
+        return DriverManager.getConnection(getConnectionString())
+    }
+
     init {
         try {
-            DriverManager.getConnection(getConnectionString()).use { connection ->
+            getConnection().use { connection ->
                 connection.createStatement().use { statement ->
 
                     val createGlossTableQuery = """
@@ -61,8 +68,81 @@ class SqliteSession private constructor() {
         }
     }
 
-    private fun getConnection(): Connection {
-        return DriverManager.getConnection(getConnectionString())
+    fun createGloss(language: Language, partOfSpeech: String, text: String, comment: String): CreateGlossResponse {
+        var id: Long? = null
+        try {
+            getConnection().use { connection ->
+                connection.autoCommit = false
+
+                try {
+                    connection.prepareStatement(
+                        "INSERT INTO Gloss (lang, partOfSpeech, text, comment) VALUES (?, ?, ?, ?)",
+                        java.sql.Statement.RETURN_GENERATED_KEYS
+                    ).use { statement ->
+                        statement.setString(1, language.code)
+                        statement.setString(2, partOfSpeech)
+                        statement.setString(3, text)
+                        statement.setString(4, comment)
+                        statement.executeUpdate()
+                        val generatedKeys = statement.generatedKeys
+                        if (generatedKeys.next()) {
+                            id = generatedKeys.getLong(1)
+                        }
+                    }
+
+                    connection.commit()
+
+                    return CreateGlossResponse(id ?: 0, language.code, partOfSpeech, text, comment)
+                } catch (e: SQLException) {
+                    connection.rollback()
+                    println(e.message)
+                } finally {
+                    connection.autoCommit = true
+                }
+            }
+        } catch (e: SQLException) {
+            println(e.message)
+        }
+
+        return CreateGlossResponse(id, language.code, partOfSpeech, text, comment)
+    }
+
+    fun getGlosses(query: String, lang: Language, partOfSpeech: String, limit: Int): GetGlossesResponse {
+        val glosses = mutableListOf<Gloss>()
+
+        try {
+            getConnection().use { connection ->
+                connection.prepareStatement(
+                    """
+                    SELECT id, lang, partOfSpeech, text, comment 
+                    FROM Gloss
+                    WHERE text LIKE ? AND lang = ? AND partOfSpeech = ?
+                    LIMIT ?
+                    """.trimIndent()
+                ).use { statement ->
+                    statement.setString(1, "%$query%")
+                    statement.setString(2, lang.code)
+                    statement.setString(3, partOfSpeech)
+                    statement.setInt(4, limit)
+
+                    val resultSet = statement.executeQuery()
+                    while (resultSet.next()) {
+                        val gloss = Gloss(
+                            id = resultSet.getLong("id"),
+                            lang = resultSet.getString("lang"),
+                            partOfSpeech = resultSet.getString("partOfSpeech"),
+                            text = resultSet.getString("text"),
+                            comment = resultSet.getString("comment")
+                        )
+                        glosses.add(gloss)
+                    }
+                }
+            }
+        } catch (e: SQLException) {
+            println(e.message)
+        }
+
+        return GetGlossesResponse(glosses)
     }
 
     fun createLink(firstLang: Language, secondLang: Language, firstText: String, secondText: String): CreateLinkResponse {

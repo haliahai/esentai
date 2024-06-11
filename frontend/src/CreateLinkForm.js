@@ -27,11 +27,6 @@ const CreateLinkForm = () => {
     });
   };
 
-  const handleSearch = async (query) => {
-    // Simulate an API call to fetch search results
-    return ["example1", "example2", "example3"].filter(item => !item.includes(query));
-  };
-
   const handleSelectSrcGloss = (gloss) => {
     setFormData({
       ...formData,
@@ -114,7 +109,6 @@ const CreateLinkForm = () => {
             selectedGloss={formData.selectedSrcGloss}
             onLangChange={handleChange}
             onGlossChange={handleChange}
-            onSearch={handleSearch}
             onGlossSelect={handleSelectSrcGloss}
             onAddNewGloss={handleAddNewSrcGloss}
           />
@@ -128,7 +122,6 @@ const CreateLinkForm = () => {
             selectedGloss={formData.selectedDstGloss}
             onLangChange={handleChange}
             onGlossChange={handleChange}
-            onSearch={handleSearch}
             onGlossSelect={handleSelectDstGloss}
             onAddNewGloss={handleAddNewDstGloss}
           />

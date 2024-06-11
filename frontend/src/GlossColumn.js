@@ -10,7 +10,6 @@ const GlossColumn = ({
   selectedGloss,
   onLangChange,
   onGlossChange,
-  onSearch,
   onGlossSelect,
   onAddNewGloss
 }) => {
@@ -24,9 +23,14 @@ const GlossColumn = ({
   }, [gloss]);
 
   const handleSearch = async (query) => {
-    // Simulate an API call to fetch search results
-    const results = ["example1", "example2", "example3"];
-    setSearchResults(results);
+    fetch('/api/v1/get/glosses?q=gloss&lang=en&pos=noun&limit=10', {
+      method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(`Get glosses, response: ${JSON.stringify(data)}`);
+      setSearchResults(data.glosses);
+    });
   };
 
   const handleNewGlossChange = (value) => {
@@ -64,7 +68,7 @@ const GlossColumn = ({
           <button
             type="button"
             onClick={handleSearch}
-            className="ml-2 mt-1 bg-blue-500 text-white font-bold py-2 px-4 rounded"
+            className={`ml-2 mt-1 bg-blue-500 text-white font-bold py-2 px-4 rounded ${!isSearchFieldValid ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={!isSearchFieldValid}
           >
             Search
