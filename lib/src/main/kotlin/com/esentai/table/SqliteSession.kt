@@ -221,14 +221,18 @@ class SqliteSession private constructor() {
                     FROM Link l
                     JOIN Gloss g1 ON l.firstId = g1.id
                     JOIN Gloss g2 ON l.secondId = g2.id
-                    WHERE g1.text LIKE ? AND l.firstLang = ? AND l.secondLang = ?
+                    WHERE (g1.text LIKE ? AND g1.lang = ? AND g2.lang = ?)
+                    OR (g1.text LIKE ? AND g1.lang = ? AND g2.lang = ?)
                     LIMIT ?
                     """.trimIndent()
                 ).use { statement ->
                     statement.setString(1, "%$query%")
                     statement.setString(2, srcLang.code)
                     statement.setString(3, dstLang.code)
-                    statement.setInt(4, limit)
+                    statement.setString(4, "%$query%")
+                    statement.setString(5, dstLang.code)
+                    statement.setString(6, srcLang.code)
+                    statement.setInt(7, limit)
 
                     val resultSet = statement.executeQuery()
                     while (resultSet.next()) {

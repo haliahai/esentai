@@ -9,7 +9,9 @@ const CreateLinkForm = () => {
     srcGloss: '',
     dstGloss: '',
     selectedSrcGloss: '',
-    selectedDstGloss: ''
+    selectedDstGloss: '',
+    srcComment: '',
+    dstComment: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -30,23 +32,15 @@ const CreateLinkForm = () => {
   const handleSelectSrcGloss = (gloss) => {
     setFormData({
       ...formData,
-      selectedSrcGloss: gloss
+      selectedSrcGloss: gloss.id
     });
   };
 
   const handleSelectDstGloss = (gloss) => {
     setFormData({
       ...formData,
-      selectedDstGloss: gloss
+      selectedDstGloss: gloss.id
     });
-  };
-
-  const handleAddNewSrcGloss = () => {
-    console.log('Add new src gloss');
-  };
-
-  const handleAddNewDstGloss = () => {
-    console.log('Add new dst gloss');
   };
 
   const validate = () => {
@@ -62,11 +56,21 @@ const CreateLinkForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (!isFormValid) {
       return;
     }
-    // Handle form submission
-    console.log('Form submitted', formData);
+
+    fetch(`/api/v1/create/link?src=${formData.srcLang}&dst=${formData.dstLang}&srcGloss=${formData.srcGloss}&dstGloss=${formData.dstGloss}`, {
+      method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(`Create link, response: ${JSON.stringify(data)}`);
+      handleReset();
+    });
+
+    console.log('Form submitted: ', formData);
   };
 
   const handleReset = () => {
@@ -77,7 +81,9 @@ const CreateLinkForm = () => {
       srcGloss: '',
       dstGloss: '',
       selectedSrcGloss: '',
-      selectedDstGloss: ''
+      selectedDstGloss: '',
+      srcComment: '',
+      dstComment: ''
     });
   };
 
@@ -105,12 +111,14 @@ const CreateLinkForm = () => {
             label="src"
             longLabel="Source"
             lang={formData.srcLang}
+            partOfSpeech={formData.partOfSpeech}
             gloss={formData.srcGloss}
+            comment={formData.srcComment}
             selectedGloss={formData.selectedSrcGloss}
             onLangChange={handleChange}
             onGlossChange={handleChange}
             onGlossSelect={handleSelectSrcGloss}
-            onAddNewGloss={handleAddNewSrcGloss}
+            onCommentChange={handleChange}
           />
 
           {/* Right Column - Destination Language */}
@@ -118,12 +126,14 @@ const CreateLinkForm = () => {
             label="dst"
             longLabel="Destination"
             lang={formData.dstLang}
+            partOfSpeech={formData.partOfSpeech}
             gloss={formData.dstGloss}
+            comment={formData.dstComment}
             selectedGloss={formData.selectedDstGloss}
             onLangChange={handleChange}
             onGlossChange={handleChange}
             onGlossSelect={handleSelectDstGloss}
-            onAddNewGloss={handleAddNewDstGloss}
+            onCommentChange={handleChange}
           />
         </div>
 

@@ -6,12 +6,14 @@ const GlossColumn = ({
   label,
   longLabel,
   lang,
+  partOfSpeech,
   gloss,
+  comment,
   selectedGloss,
   onLangChange,
   onGlossChange,
   onGlossSelect,
-  onAddNewGloss
+  onCommentChange
 }) => {
 
   const [searchResults, setSearchResults] = useState([]);
@@ -19,11 +21,11 @@ const GlossColumn = ({
   const [isSearchFieldValid, setIsSearchFieldValid] = useState(false);
 
   useEffect(() => {
-    setIsSearchFieldValid(gloss.length > 0);
+    setIsSearchFieldValid(gloss.length > 0 && lang.length > 0 && partOfSpeech.length > 0);
   }, [gloss]);
 
   const handleSearch = async (query) => {
-    fetch('/api/v1/get/glosses?q=gloss&lang=en&pos=noun&limit=10', {
+    fetch(`/api/v1/get/glosses?q=${gloss}&lang=${lang}&pos=${partOfSpeech}&limit=10`, {
       method: 'GET'
     })
     .then(response => response.json())
@@ -33,8 +35,15 @@ const GlossColumn = ({
     });
   };
 
-  const handleNewGlossChange = (value) => {
-    setNewGloss(value);
+  const handleAddNewGloss = () => {
+    fetch(`/api/v1/create/gloss?text=${gloss}&comment=${comment}&lang=${lang}&pos=${partOfSpeech}`, {
+      method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+      selectedGloss = data;
+      console.log(`Create gloss, response: ${JSON.stringify(data)}`);
+    });
   };
 
   return (
@@ -48,9 +57,9 @@ const GlossColumn = ({
           className="block w-full mt-1 p-2 border border-gray-300 rounded-md"
         >
           <option value="">{`Select ${longLabel.toLowerCase()} language`}</option>
-          <option value="kazakh">Kazakh</option>
-          <option value="english">English</option>
-          <option value="russian">Russian</option>
+          <option value="kk">Kazakh</option>
+          <option value="en">English</option>
+          <option value="ru">Russian</option>
         </select>
       </FormSection>
 
@@ -78,10 +87,13 @@ const GlossColumn = ({
 
       <FormSection label={`Select a gloss or add a new one`}>
         <GlossList
+          label={label}
           glosses={searchResults}
           selectedGloss={selectedGloss}
+          comment={comment}
           onGlossSelect={onGlossSelect}
-          onAddNewGloss={onAddNewGloss}
+          onCommentChange={onCommentChange}
+          onAddNewGloss={handleAddNewGloss}
         />
       </FormSection>
     </div>

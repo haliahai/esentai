@@ -104,8 +104,6 @@ fun Application.configureRouting() {
             val srcGloss = call.parameters["srcGloss"]
             val dstGloss = call.parameters["dstGloss"]
 
-            //TODO: add author and other fields
-
             if (src == null || dst == null || srcGloss == null || dstGloss == null) {
                 call.respond(GenericResponse.createError("invalid request"))
                 return@post
