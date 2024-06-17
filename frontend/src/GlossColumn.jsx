@@ -41,8 +41,9 @@ const GlossColumn = ({
     .then(response => response.json())
     .then(data => {
       selectedGloss = data;
+      onGlossSelect(data);
       console.log(`Create gloss, response: ${JSON.stringify(data)}`);
-      console.log(`SelectedGlossId: ${selectedGloss.id}`);
+      console.log(`SelectedGlossId: ${JSON.stringify(selectedGloss)}`);
     });
   };
 

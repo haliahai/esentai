@@ -5,8 +5,8 @@ import FormSection from './FormSection';
 const SearchLinksForm = () => {
 
   const [gloss, setGloss] = useState('');
-  const [srcLang, setSrcLang] = useState('');
-  const [dstLang, setDstLang] = useState('');
+  const [srcLang, setSrcLang] = useState('kk');
+  const [dstLang, setDstLang] = useState('ru');
   const [isFormValid, setIsFormValid] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
 
@@ -28,10 +28,6 @@ const SearchLinksForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(`Search gloss: ${gloss}, srcLang: ${srcLang}, dstLang: ${dstLang}`);
-  }
-
-  const handleSearch = () => {
     fetch(`/api/v1/get/links?q=${gloss}&src=${srcLang}&dst=${dstLang}&limit=10`, {
       method: 'GET'
     })
@@ -40,7 +36,8 @@ const SearchLinksForm = () => {
       console.log(`Get links, response: ${JSON.stringify(data)}`);
       setSearchResults(data.links);
     });
-  };
+    console.log(`Search gloss: ${gloss}, srcLang: ${srcLang}, dstLang: ${dstLang}`);
+  }
 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white shadow-md rounded-md">
@@ -87,8 +84,7 @@ const SearchLinksForm = () => {
                   placeholder="Search gloss"
                 />
                 <button
-                  type="button"
-                  onClick={handleSearch}
+                  type="submit"
                   className={`ml-2 mt-1 bg-blue-500 text-white font-bold py-2 px-4 rounded ${!isFormValid ? 'opacity-50 cursor-not-allowed' : ''}`}
                   disabled={!isFormValid}
                 >
@@ -98,13 +94,37 @@ const SearchLinksForm = () => {
             </FormSection>
 
             <FormSection label="Translations">
-              <ul>
-                {searchResults.map((item, index) => (
-                  <li key={index} className="p-2 cursor-pointer">
-                    {item.dstGloss}
-                  </li>
-                ))}
-              </ul>
+              <div className="overflow-x-auto">
+                <table className="min-w-full bg-white border border-gray-300 rounded-md">
+                  <thead>
+                    <tr>
+                      <th className="py-2 px-4 border-b">Gloss</th>
+                      <th className="py-2 px-4 border-b">Comment</th>
+                      <th className="py-2 px-4 border-b">Part of Speech</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {searchResults.map((item, index) => (
+                      <tr
+                        key={index}
+                        className={`cursor-pointer`}
+                      >
+                        <td className="py-2 px-4 border-b">{item.dstGloss}</td>
+                        <td className="py-2 px-4 border-b">{item.dstComment}</td>
+                        <td className="py-2 px-4 border-b">{item.dstPartOfSpeech}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+{/*               <ul> */}
+{/*                 {searchResults.map((item, index) => ( */}
+{/*                   <li key={index} className="p-2 cursor-pointer"> */}
+{/*                     {item.dstGloss} */}
+{/*                   </li> */}
+{/*                 ))} */}
+{/*               </ul> */}
             </FormSection>
           </form>
         </div>

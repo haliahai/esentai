@@ -15,7 +15,7 @@ val service = Service()
 fun Application.configureRouting() {
     routing {
         get("/api/v1/get/glosses") {
-            LOG.info("Got /get/glosses request")
+            LOG.info("Got /get/glosses request with parameters: ${call.parameters}")
 
             val query = call.parameters["q"]
             val lang = call.parameters["lang"]
@@ -44,7 +44,7 @@ fun Application.configureRouting() {
         }
 
         post("/api/v1/create/gloss") {
-            LOG.info("Got /create/gloss request")
+            LOG.info("Got /create/gloss request with parameters: ${call.parameters}")
 
             val lang = call.parameters["lang"]
             val partOfSpeech = call.parameters["pos"]
@@ -68,7 +68,7 @@ fun Application.configureRouting() {
         }
 
         get("/api/v1/get/links") {
-            LOG.info("Got /get/links request")
+            LOG.info("Got /get/links request with parameters: ${call.parameters}")
 
             val query = call.parameters["q"]
             val src = call.parameters["src"]
@@ -93,12 +93,14 @@ fun Application.configureRouting() {
                 return@get
             }
 
+            LOG.info("Getting links for query: $query, src: $src, dst: $dst, limit: $limit")
             val response : GetLinksResponse = service.getLinks(query, srcLang, dstLang, limit)
+            LOG.info("Responding with: $response")
             call.respond(response)
         }
 
         post("/api/v1/create/link") {
-            LOG.info("Got /create/link request")
+            LOG.info("Got /create/link request with parameters: ${call.parameters}")
             val src = call.parameters["src"]
             val dst = call.parameters["dst"]
             val srcGlossId = call.parameters["srcGloss"]?.toLongOrNull()

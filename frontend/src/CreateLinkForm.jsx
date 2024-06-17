@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react';
 import GlossColumn from './GlossColumn';
 
 const CreateLinkForm = () => {
-  const [formData, setFormData] = useState({
-    srcLang: '',
-    dstLang: '',
-    partOfSpeech: '',
+  const initialState = {
+    partOfSpeech: 'noun',
+    srcLang: 'kk',
     srcGloss: '',
-    dstGloss: '',
     selectedSrcGloss: '',
-    selectedDstGloss: '',
     srcComment: '',
+    dstLang: 'ru',
+    dstGloss: '',
+    selectedDstGloss: '',
     dstComment: ''
-  });
+  };
+
+  const [formData, setFormData] = useState(initialState);
 
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
@@ -25,7 +27,7 @@ const CreateLinkForm = () => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: value
     });
   };
 
@@ -68,8 +70,12 @@ const CreateLinkForm = () => {
     .then(data => {
       console.log('Form submitted: ', formData);
       console.log(`Create link, response: ${JSON.stringify(data)}`);
-      window.location.reload();
+      handleReset();
     });
+  };
+
+  const handleReset = () => {
+    setFormData(initialState);
   };
 
   return (
@@ -87,7 +93,12 @@ const CreateLinkForm = () => {
             <option value="">Select part of speech</option>
             <option value="noun">Noun</option>
             <option value="verb">Verb</option>
-            {/* Add more options as needed */}
+            <option value="adjective">Adjective</option>
+            <option value="adverb">Adverb</option>
+            <option value="pronoun">Pronoun</option>
+            <option value="preposition">Preposition</option>
+            <option value="conjunction">Conjunction</option>
+            <option value="interjection">Interjection</option>
           </select>
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -125,7 +136,7 @@ const CreateLinkForm = () => {
         <div className="flex justify-center items-center mt-6 space-x-4">
           <button
             type="button"
-            onClick={() => window.location.reload()}
+            onClick={handleReset}
             className="bg-red-500 text-white font-bold py-2 px-4 rounded"
           >
             Reset

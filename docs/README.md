@@ -26,8 +26,6 @@ This document provides an overview of the database tables and API request parame
 | ID            | Long       |
 | FirstID       | Long       |
 | SecondID      | Long       |
-| FirstLang     | String     |
-| SecondLang    | String     |
 | Created       | Timestamp  |
 | Modified      | Timestamp  |
 

@@ -10,6 +10,9 @@ import com.esentai.client.response.CreateLinkResponse
 import com.esentai.client.response.GetGlossesResponse
 import com.esentai.client.response.GetLinksResponse
 import com.esentai.entity.Language
+import io.ktor.util.logging.*
+
+val LOG = KtorSimpleLogger("com.esentai.table.SqliteSession")
 
 class SqliteSession private constructor() {
 
@@ -51,8 +54,6 @@ class SqliteSession private constructor() {
                     val createLinkTableQuery = """
                         CREATE TABLE IF NOT EXISTS Link (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            firstLang TEXT NOT NULL,
-                            secondLang TEXT NOT NULL,
                             firstId INTEGER NOT NULL,
                             secondId INTEGER NOT NULL,
                             created DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -182,7 +183,7 @@ class SqliteSession private constructor() {
         return GetGlossesResponse(glosses)
     }
 
-    fun createLink(firstLang: Language, secondLang: Language, srcGlossId: Long, dstGlossId: Long): CreateLinkResponse {
+    fun createLink(srcGlossId: Long, dstGlossId: Long): CreateLinkResponse {
         var id: Long? = null
         try {
             getConnection().use { connection ->
@@ -190,12 +191,10 @@ class SqliteSession private constructor() {
 
                 try {
                     connection.prepareStatement(
-                        "INSERT INTO Link (firstLang, secondLang, firstId, secondId) VALUES (?, ?, ?, ?)"
+                        "INSERT INTO Link (firstId, secondId) VALUES (?, ?)"
                     ).use { statement ->
-                        statement.setString(1, firstLang.code)
-                        statement.setString(2, secondLang.code)
-                        statement.setLong(3, srcGlossId)
-                        statement.setLong(4, dstGlossId)
+                        statement.setLong(1, srcGlossId)
+                        statement.setLong(2, dstGlossId)
                         statement.executeUpdate()
 
                         val generatedKeys = statement.generatedKeys
@@ -204,7 +203,7 @@ class SqliteSession private constructor() {
                         }
                     }
                     connection.commit()
-                    return CreateLinkResponse(id, firstLang.code, secondLang.code, srcGlossId, dstGlossId)
+                    return CreateLinkResponse(id, srcGlossId, dstGlossId)
                 } catch (e: SQLException) {
                     connection.rollback()
                     println(e.message)
@@ -216,41 +215,55 @@ class SqliteSession private constructor() {
             println(e.message)
         }
 
-        return CreateLinkResponse(id, firstLang.code, secondLang.code, srcGlossId, dstGlossId)
+        return CreateLinkResponse(id, srcGlossId, dstGlossId)
     }
-
-    fun getLinks(query: String, srcLang: Language, dstLang: Language, limit: Int): GetLinksResponse {
+    
+    fun getLinks(query: String, srcLang: Language, dstLang: Language, limit: Int, reversed: Boolean): GetLinksResponse {
         val links = mutableListOf<DictionaryLink>()
 
         try {
             getConnection().use { connection ->
-                connection.prepareStatement(
-                    """
-                    SELECT l.id, g1.lang AS firstLang, g1.text AS firstText, g2.lang AS secondLang, g2.text AS secondText 
+                val (firstGloss, secondGloss) = if (reversed) "g2" to "g1" else "g1" to "g2"
+                val matchingGloss = if (reversed) "g2" else "g1"
+
+                val sql = """
+                    SELECT 
+                        l.id,
+                        $firstGloss.lang AS lang1, 
+                        $firstGloss.text AS text1,
+                        $firstGloss.comment AS comment1,
+                        $firstGloss.partOfSpeech AS pos1,
+                        $secondGloss.lang AS lang2, 
+                        $secondGloss.text AS text2,
+                        $secondGloss.comment AS comment2,
+                        $secondGloss.partOfSpeech AS pos2
                     FROM Link l
                     JOIN Gloss g1 ON l.firstId = g1.id
                     JOIN Gloss g2 ON l.secondId = g2.id
-                    WHERE (g1.text LIKE ? AND g1.lang = ? AND g2.lang = ?)
-                    OR (g1.text LIKE ? AND g1.lang = ? AND g2.lang = ?)
+                    WHERE $matchingGloss.text LIKE ? AND $firstGloss.lang = ? AND $secondGloss.lang = ?
                     LIMIT ?
-                    """.trimIndent()
-                ).use { statement ->
+                """.trimIndent()
+
+                connection.prepareStatement(sql).use { statement ->
                     statement.setString(1, "%$query%")
                     statement.setString(2, srcLang.code)
                     statement.setString(3, dstLang.code)
-                    statement.setString(4, "%$query%")
-                    statement.setString(5, dstLang.code)
-                    statement.setString(6, srcLang.code)
-                    statement.setInt(7, limit)
+                    statement.setInt(4, limit)
+
+                    LOG.info("Executing query: $statement")
 
                     val resultSet = statement.executeQuery()
                     while (resultSet.next()) {
                         val link = DictionaryLink(
                             id = resultSet.getLong("id"),
-                            srcLang = resultSet.getString("firstLang"),
-                            dstLang = resultSet.getString("secondLang"),
-                            srcGloss = resultSet.getString("firstText"),
-                            dstGloss = resultSet.getString("secondText")
+                            srcLang = resultSet.getString("lang1"),
+                            srcGloss = resultSet.getString("text1"),
+                            srcComment = resultSet.getString("comment1"),
+                            srcPartOfSpeech = resultSet.getString("pos1"),
+                            dstLang = resultSet.getString("lang2"),
+                            dstGloss = resultSet.getString("text2"),
+                            dstComment = resultSet.getString("comment2"),
+                            dstPartOfSpeech = resultSet.getString("pos2")
                         )
                         links.add(link)
                     }
